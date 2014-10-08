@@ -12,6 +12,7 @@ var TagListForm = React.createClass({
   },
   propTypes: {
     tags: React.PropTypes.array.isRequired,
+    onChange: React.PropTypes.func.isRequired,
     strict: React.PropTypes.bool
   },
   tagIsValid: function(tag) {
@@ -23,8 +24,11 @@ var TagListForm = React.createClass({
       this.setState({
         tags: uniq(this.state.tags.concat([this.state.tag])),
         tag: ''
-      });
+      }, this.fireChange);
     }
+  },
+  fireChange: function() {
+    this.props.onChange(this.state.tags.slice(0));
   },
   inputChange: function(e) {
     this.setState({ tag: e.target.value });
@@ -34,7 +38,7 @@ var TagListForm = React.createClass({
       tags: this.state.tags.filter(function(t) {
         return t !== tag;
       })
-    });
+    }, this.fireChange);
     e.preventDefault();
   },
   focusForm: function(e) {
@@ -50,7 +54,6 @@ var TagListForm = React.createClass({
     });
     var listId = 'tag-list-form-id' +
       hash(tagOptions.join('')).toString().replace('-', '');
-    console.log(listId);
     return (
       <div
         onClick={this.focusForm}
@@ -63,7 +66,8 @@ var TagListForm = React.createClass({
               {tag}
               <a
                 href='#'
-                onClick={this.removeTag.bind(this, tag)}>x</a>
+                className={'tag-list-item-remove'}
+                onClick={this.removeTag.bind(this, tag)}></a>
             </div>);
         }.bind(this))}
         <form onSubmit={this.addTag}>

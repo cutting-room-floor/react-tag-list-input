@@ -4,6 +4,9 @@ var React = require('react'),
   TagListForm = require('./index.jsx');
 
 var Demo = React.createClass({displayName: 'Demo',
+  onChange: function(val) {
+    console.log(val);
+  },
   render: function() {
     var tags = [
       'Foo',
@@ -12,7 +15,10 @@ var Demo = React.createClass({displayName: 'Demo',
     ];
     return (
       React.DOM.div(null, 
-        TagListForm({tags: tags, strict: true})
+        TagListForm({
+          tags: tags, 
+          strict: true, 
+          onChange: this.onChange})
       )
     );
   }
@@ -38,6 +44,7 @@ var TagListForm = React.createClass({displayName: 'TagListForm',
   },
   propTypes: {
     tags: React.PropTypes.array.isRequired,
+    onChange: React.PropTypes.func.isRequired,
     strict: React.PropTypes.bool
   },
   tagIsValid: function(tag) {
@@ -49,8 +56,11 @@ var TagListForm = React.createClass({displayName: 'TagListForm',
       this.setState({
         tags: uniq(this.state.tags.concat([this.state.tag])),
         tag: ''
-      });
+      }, this.fireChange);
     }
+  },
+  fireChange: function() {
+    this.props.onChange(this.state.tags.slice(0));
   },
   inputChange: function(e) {
     this.setState({ tag: e.target.value });
@@ -60,7 +70,7 @@ var TagListForm = React.createClass({displayName: 'TagListForm',
       tags: this.state.tags.filter(function(t) {
         return t !== tag;
       })
-    });
+    }, this.fireChange);
     e.preventDefault();
   },
   focusForm: function(e) {
@@ -76,7 +86,6 @@ var TagListForm = React.createClass({displayName: 'TagListForm',
     });
     var listId = 'tag-list-form-id' +
       hash(tagOptions.join('')).toString().replace('-', '');
-    console.log(listId);
     return (
       React.DOM.div({
         onClick: this.focusForm, 
@@ -89,7 +98,8 @@ var TagListForm = React.createClass({displayName: 'TagListForm',
               tag, 
               React.DOM.a({
                 href: "#", 
-                onClick: this.removeTag.bind(this, tag)}, "x")
+                className: 'tag-list-item-remove', 
+                onClick: this.removeTag.bind(this, tag)})
             ));
         }.bind(this)), 
         React.DOM.form({onSubmit: this.addTag}, 
