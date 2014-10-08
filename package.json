@@ -7,6 +7,10 @@
     "test": "tape test.js",
     "demo": "watchify demo.jsx -o bundle.js & st -nc"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mapbox/react-tag-list-input.git"
+  },
   "browserify": {
     "transform": [
       "reactify"
