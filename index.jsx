@@ -22,7 +22,7 @@ var TagListForm = React.createClass({
     e.preventDefault();
     if (!this.props.strict || this.tagIsValid(this.state.tag)) {
       this.setState({
-        tags: uniq(this.state.tags.concat([this.state.tag])),
+        tags: uniq(this.state.tags.concat([this.state.tag]), undefined, true),
         tag: ''
       }, this.fireChange);
     }
@@ -43,6 +43,16 @@ var TagListForm = React.createClass({
   },
   focusForm: function(e) {
     this.refs.tagInput.getDOMNode().focus();
+  },
+  handleBackspace: function(e){
+    if(e.keyCode == 8 && this.state.tags.length > 0 && this.state.tag.length==0){
+      this.setState({
+        tags: this.state.tags.filter(function(t,i){
+          return i !== (this.state.tags.length-1)
+        }, this)
+      }, this.fireChange);  
+      e.preventDefault();
+    }
   },
   render: function() {
     var currentTags = this.state.tags.reduce(function(memo, tag) {
@@ -76,6 +86,7 @@ var TagListForm = React.createClass({
             list={listId}
             value={this.state.tag}
             onChange={this.inputChange}
+            onKeyUp={this.handleBackspace}
             className='tag-list-form-input'
             type='text'/>
           <datalist id={listId}>
