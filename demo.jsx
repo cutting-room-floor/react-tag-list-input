@@ -16,7 +16,7 @@ var Demo = React.createClass({
       <div>
         <TagListForm
           tags={tags}
-          strict={true}
+          strict={false}
           onChange={this.onChange} />
       </div>
     );
